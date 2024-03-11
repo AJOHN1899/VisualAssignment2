@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="scripts/d3.v7.min.js"></script>
+    <link rel='stylesheet' href='styles.css'> 
+    <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
+    <script src="https://colorbrewer2.org/#type=qualitative&scheme=Paired&n=4"></script>
+
+    <!-- style section-->
+      <style>
+         .axis path{
+             stroke:black;
+             stroke-width:2px ;
+         }   
+    
+         .axis line{
+             stroke: black;
+             stroke-width: 1.5px;
+         } 
+      
+         .axis text{
+             fill: black;
+             font-weight: bold;
+             font-size: 14px;
+             font-family:"Arial Black", Gadget, sans-serif;
+         } 
+    
+         .legend text{
+             fill:  black;
+             font-family:"Arial Black", Gadget, sans-serif;
+         }
+      </style>
+    
+</head>
+
+<body>
+        
+<script type='text/javascript' src="scripts/script.js"></script>
+
+<div class="container">
+  <h2>Line Plot using SVG</h2>
+  <div id="viz">
+    <svg> {
+      width=800px;
+      height=600px;
+      background-color: #93A1A1;
+      margin:auto;
+      
+    }
+    </svg>
+  </div>
+
+</div>
+
+</html>
