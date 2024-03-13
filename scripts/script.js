@@ -20,11 +20,12 @@ d3.csv(url)
       }
     })
 
-      console.log(d);
-      console.log(filtered_data);
+    //console.log(d);
+    // console.log(filtered_data);
     var columnsTitle = ['date','EstimatedCost','RawMaterial','Workmanship', 'StorageCost', 'ActualCost', 'SoldPrice', 'MarginofProfit']
     tabular(filtered_data,columnsTitle)
     });
+
 
 
 

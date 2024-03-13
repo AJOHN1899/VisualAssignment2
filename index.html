@@ -5,34 +5,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="scripts/d3.v7.min.js"></script>
+    <script src="scripts/d3.v7.js"></script>
     <link rel='stylesheet' href='styles.css'> 
     <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
     <script src="https://colorbrewer2.org/#type=qualitative&scheme=Paired&n=4"></script>
 
     <!-- style section-->
       <style>
-         .axis path{
-             stroke:black;
-             stroke-width:2px ;
-         }   
-    
-         .axis line{
-             stroke: black;
-             stroke-width: 1.5px;
-         } 
-      
-         .axis text{
-             fill: black;
-             font-weight: bold;
-             font-size: 14px;
-             font-family:"Arial Black", Gadget, sans-serif;
-         } 
-    
-         .legend text{
-             fill:  black;
-             font-family:"Arial Black", Gadget, sans-serif;
-         }
+        path{
+          stroke-width: 4px;
+          fill:none;
+        }
+        path.EstimatedCost{
+          stroke: #e41a1c;
+        }
+        path.ActualCost{
+          stroke: #377eb8;
+        }
+        path.SoldPrice{
+           stroke: #4daf4a;
+        }
+        path.MarginofProfit{
+           stroke: #984ea3;
+        }
+
+        g.axis{
+          font-size: 12pt;
+          stroke-width: 1px;
+        }
+
+        path.domain{
+          stroke-width: 1px;
+        }
       </style>
     
 </head>
@@ -41,19 +45,101 @@
         
 <script type='text/javascript' src="scripts/script.js"></script>
 
-<div class="container">
-  <h2>Line Plot using SVG</h2>
-  <div id="viz">
-    <svg> {
-      width=800px;
-      height=600px;
-      background-color: #93A1A1;
-      margin:auto;
+<svg width="80vw" height="60vh" viewBox="0 0 1000 600"
+  style="background-color: #f5f5f5;">
+</svg>
+
+<script>
+// step 1 select the svg element
+
+//const svg = d3.select("body").append("svg");
+// svg.attr("viewBox","0 0 1000 800")
+
+ let svg = d3.select('svg');
+ let margins = {x:60, y:80};
+
+//step 2 read the database
+//const url = "https://raw.githubusercontent.com/AJOHN1899/VisualAssignment2/main/data_sample(1).csv"
+ d3.csv(url, d=>{
+  return{
+    date: new Date(d.date),
+    EstimatedCost: +d.EstimatedCost,
+    RawMaterial: +d.RawMaterial,
+    Workmanship: +d.Workmanship,
+    StorageCost: +d.StorageCost,
+    ActualCost: +d.RawMaterial + +d.Workmanship + +d.StorageCost,
+    SoldPrice: d3.format(".2f")(+d.EstimatedCost * 1.1),
+    MarginofProfit: d3.format(".2f")((+d.EstimatedCost * 1.1) - (+d.RawMaterial + +d.Workmanship + +d.StorageCost)),
+  }
+ })
+  .then(function (data) {
+    //step 3 get the data and svg element extent
+    //svg extent
+    let rng = svg.attr('viewBox').split(' ')
+    rng = d3.map(rng,function (d){return parseInt(d)})
+    let xRng = [rng[0]+margins.x,rng[2]-margins.x];
+    let yRng = [rng[3]-margins.y,rng[1]+margins.y];
+  
+    // console.log(rng)
+  
+
+    //data extent (domain)
+    let data_extent = d3.extent(data,
+        function (d){return d.date})
+
+    let EstimatedCost_extent = d3.extent(data,
+        function (d){return +d.EstimatedCost})
       
-    }
-    </svg>
-  </div>
 
-</div>
+    //step 4 make the X and Y initial-scale
+    let xScale = d3.scaleTime().domain(data_extent).range(xRng)
+    let yScale = d3.scaleLinear().domain(EstimatedCost_extent).range(yRng)
 
+    //step 5 make the  line generator
+    let EstimatedCost_line = d3.line()
+        .x(function (d){return xScale(d.date)})
+        .y(function (d){return yScale(d.EstimatedCost)})
+        
+    let ActualCost_line = d3.line()
+        .x(function (d){return xScale(d.date)})
+        .y(function (d){return yScale(d.ActualCost)})  
+        
+    let SoldPrice_line = d3.line()
+        .x(function (d){return xScale(d.date)})
+        .y(function (d){return yScale(d.SoldPrice)})      
+
+    let MarginofProfit_line = d3.line()
+        .x(function (d){return xScale(d.date)})
+        .y(function (d){return yScale(d.MarginofProfit)})   
+
+    //step 6 add path element to the svg
+    let flg = svg.append('g');
+    //there is one path for each cost so data is only added as one array
+    flg = flg.data([data]);
+    flg.append('path').attr("d", function (d){return EstimatedCost_line(d)})
+        .attr("class","EstimatedCost")
+
+    flg.append('path').attr("d", function (d){return ActualCost_line(d)})
+        .attr("class","ActualCost")
+
+    flg.append('path').attr("d", function (d){return SoldPrice_line(d)})
+        .attr("class","SoldPrice")
+
+    flg.append('path').attr("d", function (d){return MarginofProfit_line(d)})
+        .attr("class","MarginofProfit")
+
+     //step 7 add the axis
+    //let xAxis = svg.append('g').attr("transform","translate("+(yRng[1])+"), "+(yRng[0])+")")
+    let xAxis = svg.append('g')
+    .attr('class','axis')
+    .attr("transform","translate("+(0)+"),"+(yRng[0])+")")
+    .call(d3.axisBottom(xScale));
+    let yAxis = svg.append('g')
+    .attr('class','axis')
+    .attr("transform","translate("+(margins.x)+"), "+(0)+")")
+    .call(d3.axisLeft(yScale));
+    //.attr("transform","translate("+(xRng[0])+"), "+(xRng[1])+")")
+  })
+
+</script>
 </html>
