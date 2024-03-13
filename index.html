@@ -31,6 +31,8 @@
 
         g.axis{
           font-size: 12pt;
+          font-weight: bold;
+          font-family: Arial, Helvetica, sans-serif;
           stroke-width: 1px;
         }
 
@@ -51,15 +53,10 @@
 
 <script>
 // step 1 select the svg element
-
-//const svg = d3.select("body").append("svg");
-// svg.attr("viewBox","0 0 1000 800")
-
  let svg = d3.select('svg');
  let margins = {x:60, y:80};
 
 //step 2 read the database
-//const url = "https://raw.githubusercontent.com/AJOHN1899/VisualAssignment2/main/data_sample(1).csv"
  d3.csv(url, d=>{
   return{
     date: new Date(d.date),
@@ -70,8 +67,8 @@
     ActualCost: +d.RawMaterial + +d.Workmanship + +d.StorageCost,
     SoldPrice: d3.format(".2f")(+d.EstimatedCost * 1.1),
     MarginofProfit: d3.format(".2f")((+d.EstimatedCost * 1.1) - (+d.RawMaterial + +d.Workmanship + +d.StorageCost)),
-  }
- })
+    }
+  })
   .then(function (data) {
     //step 3 get the data and svg element extent
     //svg extent
@@ -80,17 +77,13 @@
     let xRng = [rng[0]+margins.x,rng[2]-margins.x];
     let yRng = [rng[3]-margins.y,rng[1]+margins.y];
   
-    // console.log(rng)
-  
-
     //data extent (domain)
     let data_extent = d3.extent(data,
         function (d){return d.date})
 
     let EstimatedCost_extent = d3.extent(data,
         function (d){return +d.EstimatedCost})
-      
-
+   
     //step 4 make the X and Y initial-scale
     let xScale = d3.scaleTime().domain(data_extent).range(xRng)
     let yScale = d3.scaleLinear().domain(EstimatedCost_extent).range(yRng)
@@ -129,17 +122,16 @@
         .attr("class","MarginofProfit")
 
      //step 7 add the axis
-    //let xAxis = svg.append('g').attr("transform","translate("+(yRng[1])+"), "+(yRng[0])+")")
-    let xAxis = svg.append('g')
+     let xAxis = svg.append('g')
     .attr('class','axis')
-    .attr("transform","translate("+(0)+"),"+(yRng[0])+")")
+    .attr("transform", `translate("+(0)+"),"+(yRng[0]")`)
     .call(d3.axisBottom(xScale));
     let yAxis = svg.append('g')
     .attr('class','axis')
     .attr("transform","translate("+(margins.x)+"), "+(0)+")")
     .call(d3.axisLeft(yScale));
-    //.attr("transform","translate("+(xRng[0])+"), "+(xRng[1])+")")
   })
 
 </script>
 </html>
+

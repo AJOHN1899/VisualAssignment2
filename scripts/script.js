@@ -20,15 +20,11 @@ d3.csv(url)
       }
     })
 
-    //console.log(d);
-    // console.log(filtered_data);
     var columnsTitle = ['date','EstimatedCost','RawMaterial','Workmanship', 'StorageCost', 'ActualCost', 'SoldPrice', 'MarginofProfit']
     tabular(filtered_data,columnsTitle)
     });
 
-
-
-
+// Table Function
 var tabular = function (data,columns) {
   var table = d3.select('body').append('table')
     var tablehead = table.append('thead')
@@ -40,9 +36,6 @@ var tabular = function (data,columns) {
       .data(columns)
       .enter()
       .append('th')
-      //.html(function(d) {
-      //  return '<td>date</td><td>Estimated Cost</td><td>Raw Material</td><td>Workmanship</td><td>Storage Cost</td><td>Actual Cost</td>'
-      //})
       .text(function (d) { return d })
         
     // create a row for each object in the data
